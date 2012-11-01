@@ -51,13 +51,8 @@ $(document).ready(function() {
     // add the sphere to the scene
     scene.add(sphere);
 
-
     var CUBE_SIZE = 20;
-    var cubeMaterial = new THREE.MeshPhongMaterial(
-        {
-            color: 0x0000CC
-        });
-    cubeMaterial = new THREE.MeshBasicMaterial( { color: 0x2233cc, opacity: 0.5, combine: THREE.MixOperation, reflectivity: 0.75, transparent: true } );
+    cubeMaterial = new THREE.MeshBasicMaterial( { color: 0x0066cc, opacity: 0.5, combine: THREE.MixOperation, reflectivity: 0.75, transparent: true } );
 
     var cube = new THREE.Mesh(
 	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
