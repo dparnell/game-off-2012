@@ -1,0 +1,15 @@
+body {
+	background-color: black;
+}
+
+.app {
+	position: absolute;
+	width: 900px;
+	height: 600px;
+	top: 50%;
+	left: 50%;
+	margin-left: -450px;
+	margin-top: -300px;
+	background-color: white;
+}
+
