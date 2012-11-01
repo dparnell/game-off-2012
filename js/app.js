@@ -34,7 +34,7 @@ $(document).ready(function() {
     $container.append(renderer.domElement);
 
     // create the sphere's material
-    var sphereMaterial = new THREE.MeshLambertMaterial(
+    var sphereMaterial = new THREE.MeshPhongMaterial(
         {
             color: 0xCC0000
         });
@@ -58,18 +58,23 @@ $(document).ready(function() {
 	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
 	cubeMaterial
     );
+    cube.tick = function() { 
+	this.position = new THREE.Vector3(radius * 2 * Math.sin(th), 0, radius * 2 * Math.cos(th)) 
+    }
     scene.add(cube);
 
     var cube2 = new THREE.Mesh(
 	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
 	cubeMaterial
     );
+    cube2.tick = function() { this.position = new THREE.Vector3(radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th), 0) }
     scene.add(cube2);
 
     var cube3 = new THREE.Mesh(
 	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
 	cubeMaterial
     );
+    cube3.tick = function() { this.position = new THREE.Vector3(0, radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th)) }
     scene.add(cube3);
 
     // and the camera
@@ -79,10 +84,12 @@ $(document).ready(function() {
     var pointLight = new THREE.PointLight( 0xFFFFFF );
 
     // set its position
+/*
     pointLight.position.x = 10;
     pointLight.position.y = 50;
     pointLight.position.z = 130;
-
+*/
+    pointLight.tick = function() { this.position = new THREE.Vector3(130*Math.sin(-th/10), 130*Math.cos(th), 130) }
     // add to the scene
     scene.add(pointLight);
 
@@ -91,11 +98,12 @@ $(document).ready(function() {
     function tick() {
 	requestAnimationFrame(tick)
 	th += 0.05;
-
-	cube.position = new THREE.Vector3(radius * 2 * Math.sin(th), 0, radius * 2 * Math.cos(th));
-	cube2.position = new THREE.Vector3(radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th), 0);
-	cube3.position = new THREE.Vector3(0, radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th));
-
+	
+	$.each(scene.children, function(i, obj) {
+	    if(obj.tick) {
+		obj.tick();
+	    }
+	});
 	// draw!
 	renderer.render(scene, camera);
 
