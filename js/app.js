@@ -51,6 +51,20 @@ $(document).ready(function() {
     // add the sphere to the scene
     scene.add(sphere);
 
+
+    var CUBE_SIZE = 20;
+    var cubeMaterial = new THREE.MeshLambertMaterial(
+        {
+            color: 0x0000CC
+        });
+    
+    var cube = new THREE.Mesh(
+	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE, 1, 1, 1, [cubeMaterial, cubeMaterial, cubeMaterial, cubeMaterial, cubeMaterial, cubeMaterial], [true, true, true, true, true, true]),
+	cubeMaterial
+    );
+    cube.position = new THREE.Vector3(radius * 2, 0, 0);
+    scene.add(cube);
+
     // and the camera
     scene.add(camera);
 
