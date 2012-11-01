@@ -53,17 +53,29 @@ $(document).ready(function() {
 
 
     var CUBE_SIZE = 20;
-    var cubeMaterial = new THREE.MeshLambertMaterial(
+    var cubeMaterial = new THREE.MeshPhongMaterial(
         {
             color: 0x0000CC
         });
-    
+    cubeMaterial = new THREE.MeshBasicMaterial( { color: 0x2233cc, opacity: 0.5, combine: THREE.MixOperation, reflectivity: 0.75, transparent: true } );
+
     var cube = new THREE.Mesh(
-	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE, 1, 1, 1, [cubeMaterial, cubeMaterial, cubeMaterial, cubeMaterial, cubeMaterial, cubeMaterial], [true, true, true, true, true, true]),
+	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
 	cubeMaterial
     );
-    cube.position = new THREE.Vector3(radius * 2, 0, 0);
     scene.add(cube);
+
+    var cube2 = new THREE.Mesh(
+	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
+	cubeMaterial
+    );
+    scene.add(cube2);
+
+    var cube3 = new THREE.Mesh(
+	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
+	cubeMaterial
+    );
+    scene.add(cube3);
 
     // and the camera
     scene.add(camera);
@@ -79,6 +91,21 @@ $(document).ready(function() {
     // add to the scene
     scene.add(pointLight);
 
-    // draw!
-    renderer.render(scene, camera);
+    var th = 0;
+
+    function tick() {
+	requestAnimationFrame(tick)
+	th += 0.05;
+
+	cube.position = new THREE.Vector3(radius * 2 * Math.sin(th), 0, radius * 2 * Math.cos(th));
+	cube2.position = new THREE.Vector3(radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th), 0);
+	cube3.position = new THREE.Vector3(0, radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th));
+
+	// draw!
+	renderer.render(scene, camera);
+
+    }
+
+    tick();
+
 });
