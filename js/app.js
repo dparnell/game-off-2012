@@ -15,6 +15,14 @@ $(document).ready(function() {
     // - assume we've got jQuery to hand
     var $container = $('.app');
 
+
+    var stats = new Stats();
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+
+    document.body.appendChild(stats.domElement);
+
     // create a WebGL renderer, camera
     // and a scene
     var renderer = new THREE.WebGLRenderer();
@@ -49,40 +57,17 @@ $(document).ready(function() {
         sphereMaterial);
 
     // add the sphere to the scene
-    scene.add(sphere);
+//    scene.add(sphere);
 
-    var CUBE_SIZE = 20;
-    cubeMaterial = new THREE.MeshBasicMaterial( { color: 0x0066cc, opacity: 0.5, combine: THREE.MixOperation, reflectivity: 0.75, transparent: true } );
-
-    var cube = new THREE.Mesh(
-	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
-	cubeMaterial
-    );
-    cube.tick = function() { 
-	this.position = new THREE.Vector3(radius * 2 * Math.sin(th), 0, radius * 2 * Math.cos(th)) 
-    }
-    scene.add(cube);
-
-    var cube2 = new THREE.Mesh(
-	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
-	cubeMaterial
-    );
-    cube2.tick = function() { this.position = new THREE.Vector3(radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th), 0) }
-    scene.add(cube2);
-
-    var cube3 = new THREE.Mesh(
-	new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
-	cubeMaterial
-    );
-    cube3.tick = function() { this.position = new THREE.Vector3(0, radius * 2 * Math.sin(th), radius * 2 * Math.cos(-th)) }
-    scene.add(cube3);
-
-    // and the camera
-    scene.add(camera);
-
+    init_maze(THREE, scene);
+    
     // create a point light
     var pointLight = new THREE.PointLight( 0xFFFFFF );
-    pointLight.tick = function() { this.position = new THREE.Vector3(130*Math.sin(-th/10), 130*Math.cos(th), 130) }
+    //pointLight.tick = function() { this.position = new THREE.Vector3(130*Math.sin(-th/10), 130*Math.cos(th), 130) }
+    pointLight.position.x = 0;
+    pointLight.position.y = 0;
+    pointLight.position.z = 130;
+
     // add to the scene
     scene.add(pointLight);
 
@@ -100,6 +85,7 @@ $(document).ready(function() {
 	// draw!
 	renderer.render(scene, camera);
 
+	stats.update();
     }
 
     tick();
