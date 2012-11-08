@@ -10,6 +10,7 @@
 
     var THREE = null;
     var cubes = [];
+    var walls = [];
     var scene;
     var cubeMaterial;
 
@@ -47,6 +48,23 @@
 	    THREE = three;
 	    scene = aScene;
 	    cubeMaterial = new THREE.MeshLambertMaterial( { color: 0x0066cc } );
+
+	    // add the top wall
+	    walls[0] = new THREE.Mesh(new THREE.CubeGeometry(CUBE_SIZE * MAZE_WIDTH * CUBE_FUDGE, CUBE_SIZE, CUBE_SIZE), cubeMaterial);
+	    walls[0].position = new THREE.Vector3(-OFFSET_X_BY/2, MAZE_HEIGHT/2 * CUBE_SIZE * CUBE_FUDGE + OFFSET_Y_BY, 0);
+	    scene.add(walls[0]);
+	    // add the right wall
+	    walls[1] = new THREE.Mesh(new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE * MAZE_HEIGHT * CUBE_FUDGE, CUBE_SIZE), cubeMaterial);
+	    walls[1].position = new THREE.Vector3(MAZE_WIDTH/2 * CUBE_SIZE * CUBE_FUDGE + OFFSET_X_BY, -OFFSET_Y_BY/2,  0);
+	    scene.add(walls[1]);
+	    // add the bottom wall
+	    walls[2] = new THREE.Mesh(new THREE.CubeGeometry(CUBE_SIZE * MAZE_WIDTH * CUBE_FUDGE, CUBE_SIZE, CUBE_SIZE), cubeMaterial);
+	    walls[2].position = new THREE.Vector3(-OFFSET_X_BY/2, -(MAZE_HEIGHT/2+1) * CUBE_SIZE * CUBE_FUDGE + OFFSET_Y_BY, 0);
+	    scene.add(walls[2]);
+	    // add the left wall
+	    walls[3] = new THREE.Mesh(new THREE.CubeGeometry(CUBE_SIZE, CUBE_SIZE * MAZE_HEIGHT * CUBE_FUDGE, CUBE_SIZE), cubeMaterial);
+	    walls[3].position = new THREE.Vector3(-(MAZE_WIDTH/2+1) * CUBE_SIZE * CUBE_FUDGE + OFFSET_X_BY, -OFFSET_Y_BY/2,  0);
+	    scene.add(walls[3]);
 	}
 
 	return new Maze();
