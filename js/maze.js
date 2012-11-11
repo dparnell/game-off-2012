@@ -26,156 +26,53 @@
 	cubes = [];
     }
 
-    function mazeBuilder() {
-	var x = 0;
-	var y = 0;
-	var direction = 0;
-	var distance = Math.floor(Math.random()*10)+1;
-	var todo = [];
-
-	function lookAhead(dir, dist) {
-	    if(dir==0) {
-		if(y+dist<MAZE_HEIGHT) {
-		    return cubes[x+(y+dist)*MAZE_WIDTH];
-		}
-	    }
-	    if(dir==1) {
-		if(x+dist<MAZE_WIDTH) {
-		    return cubes[(x+dist)+y*MAZE_WIDTH];
-		}
-	    }
-	    if(dir==2) {
-		if(y-dist>=0) {
-		    return cubes[x+(y-dist)*MAZE_WIDTH];
-		}
-	    }
-	    if(dir==3) {
-		if(x-dist>=0) {
-		    return cubes[(x-dist)+y*MAZE_WIDTH];
-		}
-	    }
-
-	    return false;
-	}
+    // very simple "maze" builder.  Need a better one as the mazes it makes are not very good
+    function build_maze(x,y,d) {
+	var dx, dy;
+	var nx, ny;
 	
-	function neighbourCount() {
-	    var result = 0;
-
-	    if(x>0) {
-		if(cubes[(x-1)+y*MAZE_WIDTH]) {
-		    result++;
-		}
-	    } else {
-		result++;
-	    }
-	    if(x<MAZE_WIDTH-1) {
-		if(cubes[(x+1)+y*MAZE_WIDTH]) {
-		    result++;
-		}
-	    } else {
-		result++;
-	    }
-	    if(y>0) {
-		if(cubes[x+(y-1)*MAZE_WIDTH]) {
-		    result++;
-		}
-	    } else {
-		result++;
-	    }
-	    if(y<MAZE_HEIGHT-1) {
-		if(cubes[x+(y+1)*MAZE_WIDTH]) {
-		    result++;
-		}
-	    } else {
-		result++;
-	    }
-	    return result;
+	if(d==0) {
+	    dx = 0;
+	    dy = 1;
+	} else if(d==1) {
+	    dx = 1;
+	    dy = 0;
+	} else if(d==2) {
+	    dx = 0;
+	    dy = -1;
+	} else if(d==3) {
+	    dx = -1;
+	    dy = 0;
 	}
 
-	var builder = function() {
-//	    console.info({'x':x,'y':y,'direction':direction,'distance':distance});
-
-	    if(neighbourCount()<2) {
-		distance = 0;
-	    }
-
-	    if(distance>0) {
+	if(cubes[(x+dx)+(y+dy)*MAZE_WIDTH]) {
+	    var distance = (Math.floor(Math.random()*5)+1)*2;
+	    while(distance>0) {
+		box.position.x = (x-MAZE_WIDTH/2) * CUBE_SIZE * CUBE_FUDGE + OFFSET_X_BY;
+		box.position.y = (y-MAZE_HEIGHT/2) * CUBE_SIZE * CUBE_FUDGE + OFFSET_Y_BY;
+		box.position.z = 0;
+		
 		var cube = cubes[x+y*MAZE_WIDTH];
-		scene.remove(cube);
-		cubes[x+y*MAZE_WIDTH] = null;
-
-		if(direction==0) {
-		    y = y + 1;
-		} else if(direction==1) {
-		    x = x + 1;
-		} else if(direction==2) {
-		    y = y - 1;
-		} else {
-		    x = x - 1;
+		if(cube) {
+		    scene.remove(cube);
+		    cubes[x+y*MAZE_WIDTH] = null;
 		}
-
-		if(x<0) {
-		    x = 0;
-		    distance = 0;
-		} else if(x==MAZE_WIDTH) {
-		    x = MAZE_WIDTH-1;
-		    distance = 0;
-		} else if(y<0) {
-		    y = 0;
-		    distance = 0;
-		} else if(y==MAZE_HEIGHT) {
-		    y = MAZE_HEIGHT-1;
-		    distance = 0;
+		
+		nx = x + dx;
+		ny = y + dy;
+		if(nx>=0 && nx<MAZE_WIDTH && ny>=0 && ny<MAZE_HEIGHT) {
+		    x = nx;
+		    y = ny;
 		} else {
-		    distance--;
-		    if(distance>0) {
-//			todo.push({'x': x, 'y': y});
-			global.setTimeout(builder, MAZE_SPEED);
-		    }
+		    break;
 		}
+		distance--;
 	    }
-
-	    if(distance<=0) {
-		var new_dir = (direction + 1) & 3;
-		var found = false;
-		var counter = 4;
-		while(counter>0 && !found) {
-		    found = lookAhead(new_dir, 1) && lookAhead(new_dir, 2);
-
-		    if(!found) {
-			new_dir = (new_dir+1) & 3;
-		    }
-
-		    counter--;
-		}
-
-		if(found) {
-		    todo.push({'x': x, 'y': y});
-		    direction = new_dir;
-		    distance = Math.floor(Math.random()*10)+1;
-		    global.setTimeout(builder, MAZE_SPEED);
-		} else {
-  		    if(todo.length>0) {
-			var p = todo.pop();
-			x = p.x;
-			y = p.y;
-
-			console.info(p);
-			global.setTimeout(builder, MAZE_SPEED);
-		    } else {
-			console.error(todo);
-			scene.remove(box);
-		    }
-
-		}
-	    }
-
-	    box.position.x = (x-MAZE_WIDTH/2) * CUBE_SIZE * CUBE_FUDGE + OFFSET_X_BY;
-	    box.position.y = (y-MAZE_HEIGHT/2) * CUBE_SIZE * CUBE_FUDGE + OFFSET_Y_BY;
-	    box.position.z = 0;
+	    
+	    build_maze(x,y,(d+1)&3);
+	    build_maze(x,y,(d+2)&3);
+	    build_maze(x,y,(d+3)&3);
 	}
-
-	return builder;
     }
 
     function Maze() {
@@ -199,8 +96,10 @@
 	}
 
 	scene.add(box);
-	
-	global.setTimeout(mazeBuilder(), MAZE_SPEED);
+
+
+	build_maze(0,0,0);
+//	global.setTimeout(mazeBuilder(), MAZE_SPEED);
     }
 
     Maze.prototype.clearMaze = clearMaze;
